@@ -1,6 +1,6 @@
 # pieces 🍑
 
-Verify Piece and Aggregate CIDs for a web3.storage filecoin aggregate offer.
+CLI to verify w3filecoin aggregate offers
 
 `status: 🏗️ WIP`
 
