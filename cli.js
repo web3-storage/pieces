@@ -7,7 +7,7 @@ import path from 'node:path'
 import { fetch } from 'undici'
 import { pipeline } from 'node:stream/promises'
 import * as readline from 'node:readline/promises'
-import { Piece } from '@web3-storage/data-segment'
+import { Piece, Aggregate } from '@web3-storage/data-segment'
 import { PieceHash } from './index.js'
 import { CID } from 'multiformats/cid'
 import { base16 } from 'multiformats/bases/base16'
@@ -71,6 +71,15 @@ cli.command('verify [car] [cid]', 'check the car piece cid is correct')
       }
       /** @type {Offer} */
       const offer = JSON.parse(fs.readFileSync(input, { encoding: 'utf-8' }))
+      const aggregate = await aggregateFromOffer(offer)
+      const aggregateOk = offer.aggregate === aggregate.link.toString()
+      if (!aggregateOk) {
+        console.log(`expect: ${offer.aggregate}`)
+        console.log(`actual: ${aggregate.link.toString()}`)
+        exit(1, 'bad aggregate cid')
+      } else {
+        console.log(`aggregate cid ${offer.aggregate} ok`)
+      }
       console.log(`verifying ${offer.pieces.length} pieces`)
       const files = await statAll(offer.pieces)
       const missing = files.filter(x => x.size === undefined || x.size === 0)
@@ -200,6 +209,12 @@ async function statAll (cids) {
     const { size } = await stat(car)
     return { car, size, expected: cid }
   })
+}
+
+/** @param {Offer} offer */
+async function aggregateFromOffer ({ pieces: parts }) {
+  const pieces = parts.map(p => Piece.fromString(p))
+  return Aggregate.build({ pieces })
 }
 
 /** @param {number} byteLength} */
