@@ -6,23 +6,31 @@ import * as raw from 'multiformats/codecs/raw'
 export class PieceHash {
   hasher = PieceHasher.create()
 
-  getPieceHashTransform () {
+  /**
+   * Pipeline destination to hash bytes from a stream
+   */
+  sink () {
     const hasher = this.hasher
-
     /** @param {AsyncIterable<Uint8Array>} source */
-    return async function * pieceHash (source) {
+    return async function pieceHash (source) {
       for await (const chunk of source) {
         hasher.write(chunk)
-        yield chunk
       }
     }
   }
 
+  digest () {
+    const bytes = new Uint8Array(PieceHasher.prefix.length + PieceHasher.size)
+    this.hasher.digestInto(bytes, 0, true)
+    return bytes
+  }
+
   link () {
-    const digestBytes = new Uint8Array(PieceHasher.prefix.length + PieceHasher.size)
-    this.hasher.digestInto(digestBytes, 0, true)
-    const digest = Digest.decode(digestBytes)
-    const pieceCid = Link.create(raw.code, digest)
-    return pieceCid
+    const digest = Digest.decode(this.digest())
+    return Link.create(raw.code, digest)
+  }
+
+  reset () {
+    this.hasher.reset()
   }
 }

@@ -17,6 +17,7 @@
     "fr32-sha2-256-trunc254-padded-binary-tree-multihash": "^1.1.4",
     "p-map": "^6.0.0",
     "p-retry": "^6.1.0",
+    "piscina": "^4.1.0",
     "sade": "^1.8.1",
     "undici": "^5.25.2"
   },

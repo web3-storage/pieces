@@ -2,6 +2,7 @@
 
 import sade from 'sade'
 import fs from 'node:fs'
+import { stat } from 'node:fs/promises'
 import path from 'node:path'
 import { fetch } from 'undici'
 import { pipeline } from 'node:stream/promises'
@@ -13,6 +14,12 @@ import { base16 } from 'multiformats/bases/base16'
 import Progress from 'cli-progress'
 import retry from 'p-retry'
 import map from 'p-map'
+// @ts-expect-error piscina export type error
+import { Piscina } from 'piscina'
+
+/**
+ * @typedef {{ aggregate: string, pieces: string[] }} Offer
+ **/
 
 const cli = sade('piece').version('1')
 
@@ -54,29 +61,78 @@ cli.command('plan [pieceCid]', 'create aria2 download plan for aggregate offer j
     bar.stop()
   })
 
-cli.command('verify <car> [cid]', 'check the car piece cid is correct')
-  .action(async (car, cid, opts) => {
+cli.command('verify [car] [cid]', 'check the car piece cid is correct')
+  .option('--input, -i', 'path to w3filecoin aggregate json')
+  .action(async (car, pieceCid, opts) => {
+    const input = opts.input ? path.resolve(opts.input) : undefined
+    if (input) {
+      if (!fs.existsSync(input)) {
+        exit(404, `input not found: ${input}`)
+      }
+      /** @type {Offer} */
+      const offer = JSON.parse(fs.readFileSync(input, { encoding: 'utf-8' }))
+      console.log(`verifying ${offer.pieces.length} pieces`)
+      const files = await statAll(offer.pieces)
+      const missing = files.filter(x => x.size === undefined || x.size === 0)
+      if (missing.length > 0) {
+        for (const miss of missing) {
+          console.log(`${miss} missing`)
+        }
+        exit(1, 'failed to verify: cars are missing')
+      }
+      const totalBytes = files.reduce((total, x) => total + x.size, 0)
+
+      const bar = progressBar()
+      bar.start(totalBytes, 0, { totalMib: mib(totalBytes), valueMib: 0 })
+
+      // lots of hashing to do! use more cores with a worker pool.
+      // drops total time from 600s (no workers) to 100s on 8 cores.
+      const piscina = new Piscina({
+        filename: new URL('./worker.js', import.meta.url).href
+      })
+
+      let byteCount = 0
+      const res = await map(offer.pieces, async (expected) => {
+        const car = `${expected}.car`
+        const actual = await piscina.run(car)
+        const file = files.find(x => x.expected === expected)
+        byteCount += file?.size || 0
+        bar.update(byteCount, { valueMib: mib(byteCount) })
+        const ok = actual === expected
+        return ok ? { car, ok } : { car, ok, error: 'not match', expected, actual }
+      })
+      bar.stop()
+
+      const bads = res.filter(x => x.ok === false)
+      for (const x of bads) {
+        console.log(JSON.stringify(x))
+      }
+
+      const allOk = bads.length === 0
+
+      if (!allOk) {
+        exit(1, `failed to verify ${bads.length}`)
+      } else {
+        console.log('ok')
+        return
+      }
+    }
+
     if (!car || !fs.existsSync(car)) {
       exit(400, `Could not find car file at ${car}`)
     }
-    cid = cid ?? path.basename(car, '.car')
-    if (!cid) {
+    pieceCid = pieceCid ?? path.basename(car, '.car')
+    if (!pieceCid) {
       exit(400, `Could not infer piece cid from ${car}`)
     }
+    const actual = await pieceCidForCar(car)
 
-    const pieceHash = new PieceHash()
-    await pipeline(
-      fs.createReadStream(car),
-      pieceHash.getPieceHashTransform()
-    )
-    const pieceCid = pieceHash.link()
-
-    if (cid === pieceCid.toString()) {
-      console.log('ok')
+    if (pieceCid === actual.toString()) {
+      console.log(`${pieceCid} ok`)
       return
     }
 
-    console.log('expect', cid)
+    console.log('expect', pieceCid)
     console.log('actual', pieceCid.toString())
     exit(1, `Piece cid does not match for ${car}`)
   })
@@ -123,6 +179,43 @@ async function fetchRetry (url, opts = {}) {
     }
     return res
   }, opts)
+}
+
+/**
+ * @param {string} car - path to car
+ */
+async function pieceCidForCar (car) {
+  const pieceHash = new PieceHash()
+  await pipeline(
+    fs.createReadStream(car),
+    pieceHash.sink()
+  )
+  return pieceHash.link()
+}
+
+/** @param {string[]} cids */
+async function statAll (cids) {
+  return map(cids, async (cid) => {
+    const car = `${cid}.car`
+    const { size } = await stat(car)
+    return { car, size, expected: cid }
+  })
+}
+
+/** @param {number} byteLength} */
+function mib (byteLength) {
+  return (byteLength / (1024 ^ 2)).toFixed(0)
+}
+
+function progressBar () {
+  return new Progress.SingleBar({
+    stopOnComplete: true,
+    clearOnComplete: true,
+    hideCursor: true,
+    gracefulExit: true,
+    format: '{bar} {percentage}% | {valueMib}/{totalMib} MiB'
+  },
+  Progress.Presets.shades_classic)
 }
 
 /**

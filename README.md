@@ -68,3 +68,16 @@ https://roundabout.web3.storage/bafkzcibbas7jhdreszithbxqzcxvln2usxtbyeo75pqqsnz
   out=bafkzcibbas7jhdreszithbxqzcxvln2usxtbyeo75pqqsnzz26hybgvlpggcw.car
 ```
 
+## `verify`
+
+Check the piece CID for each car. Pass the path to the offer json as `--input`.
+
+Run it from the dir with all the cars that you downloaded with aria from the aria download plan created with `piece plan`
+
+```shell
+$ piece plan --input aggregate-offer.json
+verifying 1284 pieces
+████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 30% | 5276557/17571857 MiB
+```
+
+_takes ~120s to verify 1284 pieces at 18.4GiB_

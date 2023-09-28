@@ -10,5 +10,6 @@
     "allowJs": true,
     "checkJs": true,
     "resolveJsonModule": true,
+    "useUnknownInCatchVariables": false
   }
 }
