@@ -1,7 +1,7 @@
 {
   "name": "@web3-storage/pieces",
   "description": "CLI to verify w3filecoin aggregate offers",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "bin": {
     "pieces": "cli.js"
   },
