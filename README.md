@@ -15,11 +15,35 @@ $ pieces verify -i offer.json
 
 ## Getting Started
 
-With `nodejs` >= v20, install the deps with `npm i`, or use `npx`.
+With `nodejs` >= v20, You can install the `pieces` cli via npm
 
+```shell
+# install it globally with -g
+$ npm install -g @web3-storage/pieces
+
+$ pieces --help
+
+  Usage
+    $ piece <command> [options]
+
+  Available Commands
+    plan      create aria2 download plan for aggregate offer json
+    verify    check the car piece cid is correct
+    find      resolve url for piece cid
 ```
-# run pieces from github repo! spicy!
-$ npx github:web3-storage/pieces plan bafkzcibbatsmklu6hhjkdz4hbatu4uk5bd4uk4zj43xocspxn7yiyo54jy7bg
+
+or you can run it directly with `npx`
+
+```shell
+# run pieces from npm
+$ npx @web3-storage/pieces --help
+```
+
+or run it from source; clone this repo, install the deps, and run `cli.js`
+
+```shell
+$ npm i
+$ ./cli.js --help
 ```
 
 ## Usage
