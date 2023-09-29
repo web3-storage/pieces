@@ -15,7 +15,7 @@ $ pieces verify -i offer.json
 
 ## Getting Started
 
-With `nodejs` >= v18, install the deps with `npm i`, or use `npx`.
+With `nodejs` >= v20, install the deps with `npm i`, or use `npx`.
 
 ```
 # run pieces from github repo! spicy!

@@ -2,14 +2,15 @@
   "name": "@web3-storage/pieces",
   "description": "CLI to verify w3filecoin aggregate offers",
   "version": "1.0.0",
-  "main": "index.js",
-  "bin": "cli.js",
+  "bin": {
+    "pieces": "cli.js"
+  },
   "type": "module",
   "author": "olizilla",
   "license": "(Apache-2.0 AND MIT)",
   "scripts": {
     "posttest": "standard && tsc",
-    "test": "echo \"Error: no test specified\""
+    "test": "echo \"no tests yet\""
   },
   "dependencies": {
     "@web3-storage/data-segment": "^3.0.1",
@@ -27,5 +28,8 @@
     "@types/node": "^18.18.0",
     "standard": "^17.1.0",
     "typescript": "^5.2.2"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
