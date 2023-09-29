@@ -31,5 +31,18 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "files": [
+    "cli.js",
+    "src",
+    "dist"
+  ],
+  "typesVersions": {
+    "*": {
+      "*": [
+        "*",
+        "dist/*"
+      ]
+    }
   }
 }
