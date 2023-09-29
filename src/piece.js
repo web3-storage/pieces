@@ -1,4 +1,5 @@
 import * as PieceHasher from 'fr32-sha2-256-trunc254-padded-binary-tree-multihash'
+// import * as mh from '@web3-storage/data-segment/multihasher'
 import * as Link from 'multiformats/link'
 import * as Digest from 'multiformats/hashes/digest'
 import * as raw from 'multiformats/codecs/raw'

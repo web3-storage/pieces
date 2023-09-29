@@ -2,13 +2,11 @@
 
 CLI to verify w3filecoin aggregate offers
 
-`status: 🏗️ WIP`
-
 ```shell
 # Create an aria2 download plan for all CARs with checksums
 $ pieces plan -i offer.json --output piece-urls.aria
 
-# Fetch all the cars
+# Fetch and verify all the cars with aria2
 $ aria2c -i piece-urls.aria
 
 # Verify the piece cids and aggregate cid
@@ -33,7 +31,7 @@ The following commands are available
 Create an aria2 input file to download all the CARs for the pieces in an aggregate offer json
 
 ```shell
-$ piece plan --input aggregate-offer.json --output piece.urls
+$ pieces plan --input aggregate-offer.json --output piece.urls
 ```
 
 Pass the output to aria2 to fetch all the things, with checksum validation and resumable goodness.
@@ -68,16 +66,37 @@ https://roundabout.web3.storage/bafkzcibbas7jhdreszithbxqzcxvln2usxtbyeo75pqqsnz
   out=bafkzcibbas7jhdreszithbxqzcxvln2usxtbyeo75pqqsnzz26hybgvlpggcw.car
 ```
 
-## `verify`
+### `verify`
 
 Check the piece CID for each car. Pass the path to the offer json as `--input`.
 
 Run it from the dir with all the cars that you downloaded with aria from the aria download plan created with `piece plan`
 
 ```shell
-$ piece plan --input aggregate-offer.json
+$ pieces verify --input aggregate-offer.json
+aggregate cid bafkzcibbd3lmdpootmhl7xhn6dnz7ynhe5a7kaurlnppj7rqd4lembwgdfrdy ok
 verifying 1284 pieces
 ████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░ 30% | 5276557/17571857 MiB
 ```
 
 _takes ~120s to verify 1284 pieces at 18.4GiB_
+
+
+### `find`
+
+Find the car URL for a piece CID, if the car is stored in w3up and we have a content-claim for it.
+
+```shell
+$ pieces find bafkzcibbatsmklu6hhjkdz4hbatu4uk5bd4uk4zj43xocspxn7yiyo54jy7bg
+```
+
+#### output
+
+```json
+{
+  "piece":"bafkzcibbatsmklu6hhjkdz4hbatu4uk5bd4uk4zj43xocspxn7yiyo54jy7bg",
+  "car":"bagbaierai52x6r2rqjm72o3foxlm2shbmg6pepvhzpywwbryzdeydicsf5rq",
+  "url":"https://carpark-prod-0...",
+  "roundabout":"https://roundabout.web3.storage/bafkzcibbatsmklu6hhjkdz4hbatu4uk5bd4uk4zj43xocspxn7yiyo54jy7bg"
+}
+```
