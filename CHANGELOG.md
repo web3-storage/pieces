@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/web3-storage/pieces/compare/v1.0.1...v2.0.0) (2023-11-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade to piece cid v2 ([#6](https://github.com/web3-storage/pieces/issues/6))
+
+### Features
+
+* upgrade to piece cid v2 ([#6](https://github.com/web3-storage/pieces/issues/6)) ([e306844](https://github.com/web3-storage/pieces/commit/e3068446b4067ff2cab1d4a69e86956184891255))
+
 ## [1.0.1](https://github.com/web3-storage/pieces/compare/v1.0.0...v1.0.1) (2023-09-29)
 
 
