@@ -21,7 +21,7 @@ export class PieceHash {
   }
 
   digest () {
-    const bytes = new Uint8Array(PieceHasher.prefix.length + PieceHasher.size)
+    const bytes = new Uint8Array(this.hasher.multihashByteLength())
     this.hasher.digestInto(bytes, 0, true)
     return bytes
   }
