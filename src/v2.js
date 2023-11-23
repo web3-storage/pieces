@@ -14,8 +14,8 @@ import { parse as parseLink } from 'multiformats/link'
  * @param {Options} opts
  */
 export default async function v2 (cidStr, opts) {
-  const height = opts.height ? Number(opts.height) : undefined
-  const logSize = opts['log-size'] ? Number(opts['log-size']) : undefined
+  const height = opts.height ? parseInt(opts.height) : undefined
+  const logSize = opts['log-size'] ? parseInt(opts['log-size']) : undefined
 
   if (!height && !logSize) {
     return exit(400, 'needs either height or log2 size of the Piece')
@@ -26,7 +26,7 @@ export default async function v2 (cidStr, opts) {
   try {
     pieceCidV1 = parseLink(cidStr)
   } catch {
-    throw new Error(`PieceCIDv1 received ${cidStr} is not a valid CID`)
+    return exit(400, `PieceCIDv1 received ${cidStr} is not a valid CID`)
   }
 
   if (height) {
@@ -36,10 +36,10 @@ export default async function v2 (cidStr, opts) {
     )
 
     console.log(piece.toString())
-  } else {
+  } else if (logSize) {
     const piece = convertPieceCidV1toPieceCidV2(
       pieceCidV1,
-      log2PieceSizeToHeight(Number(logSize))
+      log2PieceSizeToHeight(logSize)
     )
 
     console.log(piece.toString())
