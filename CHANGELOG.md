@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/web3-storage/pieces/compare/v2.0.0...v2.1.0) (2023-11-23)
+
+
+### Features
+
+* add v2 conversion command ([#5](https://github.com/web3-storage/pieces/issues/5)) ([e87f72f](https://github.com/web3-storage/pieces/commit/e87f72fa5c7f2ad18f07dc63388ac3c93a75a56d))
+
 ## [2.0.0](https://github.com/web3-storage/pieces/compare/v1.0.1...v2.0.0) (2023-11-22)
 
 
