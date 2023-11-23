@@ -30,6 +30,7 @@ $ pieces --help
     plan      create aria2 download plan for aggregate offer json
     verify    check the car piece cid is correct
     find      resolve url for piece cid
+    v2        convert PieceCIDv1 to PieceCIDv2
 ```
 
 or you can run it directly with `npx`
@@ -123,4 +124,18 @@ $ pieces find bafkzcibbatsmklu6hhjkdz4hbatu4uk5bd4uk4zj43xocspxn7yiyo54jy7bg
   "url":"https://carpark-prod-0...",
   "roundabout":"https://roundabout.web3.storage/bafkzcibbatsmklu6hhjkdz4hbatu4uk5bd4uk4zj43xocspxn7yiyo54jy7bg"
 }
+```
+
+### `v2`
+
+Converts PieceCIDv1 to PieceCIDv2 with its height embedded.
+
+```shell
+$ pieces v2 baga6ea4seaqhmw7z7q3jypdr54xaluhzdn6syn7ovovvjpaqul2qqenhmg43wii --height 30
+bafkzcibcaaphmw7z7q3jypdr54xaluhzdn6syn7ovovvjpaqul2qqenhmg43wii
+```
+
+```shell
+$ pieces v2 baga6ea4seaqhmw7z7q3jypdr54xaluhzdn6syn7ovovvjpaqul2qqenhmg43wii --log-size 35
+bafkzcibcaaphmw7z7q3jypdr54xaluhzdn6syn7ovovvjpaqul2qqenhmg43wii
 ```

@@ -3,6 +3,7 @@
 import plan from './src/plan.js'
 import verify from './src/verify.js'
 import find from './src/find.js'
+import v2 from './src/v2.js'
 import sade from 'sade'
 
 const cli = sade('piece').version('1')
@@ -19,5 +20,10 @@ cli.command('verify [car] [cid]', 'check the car piece cid is correct')
 
 cli.command('find <piece>', 'resolve url for piece cid')
   .action(find)
+
+cli.command('v2 <piece>', 'convert PieceCIDv1 to PieceCIDv2')
+  .option('--height, -h', 'Piece height')
+  .option('--log-size, -l', 'Log2 size of the Piece')
+  .action(v2)
 
 cli.parse(process.argv)
